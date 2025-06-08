@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Inventory</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 200px;
+            background-color: #ebebeb;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav li {
+            margin-bottom: 10px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .nav a:hover {
+            background-color: #ccc;
+        }
+
+        .pageContent {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #itemCount {
+            color: #b89c00;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filterSection {
+            flex: 0 0 30%;
+            text-align: center;
+        }
+
+        .filterSection a {
+            text-decoration: none;
+            color: #5aaeda;
+        }
+
+        .filterSection a:hover {
+            text-decoration: underline;
+        }
+
+        .searchInput {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo span {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .equipmentTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .equipmentTable td:nth-child(2) {
+            max-width: 300px; 
+            word-wrap: break-word;
+        }
+
+        .equipmentTable th,
+        .equipmentTable td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .equipmentTable th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .equipmentTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .equipmentTable button[type="submit"] {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .equipmentTable button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .equipmentTable button[type="submit"][disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span style="font-size: 24px; font-weight: bold; color: #ff6600;">W</span>
+            <span style="font-size: 24px; font-weight: bold; color: #ffffff;">M</span>
+            <span style="font-size: 24px; font-weight: bold; color: #007bff;">I</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'equipmentView' %}">View Equip</a></li>
+            <li><a href="{% url 'bookings_view' %}">My Bookings</a></li>
+            <li><a href="{% url 'profile_management' %}">Profile</a></li> 
+            {% if is_staff %}
+            <li><a href="{% url 'booking_management' %}">Booking Management</a></li>
+            <li><a href="{% url 'equipmentManagement' %}">Equipment Management</a></li>
+            <li><a href="{% url 'user_management' %}">User Management</a></li>
+            <li><a href="{% url 'reports' %}">Generate Reports</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="pageContent">
+        <h1>View Equipment</h1>
+        <div class="filters">
+            <div class="filterSection">
+                <p><strong>Item Types</strong></p>
+                <a href="{% url 'equipmentView' %}">All</a>
+                {% for itemtype in itemtypes %}
+                    <a href="{% url 'equipmentView' %}?type={{ itemtype.type }}">{{ itemtype.type }}</a>
+                {% endfor %}
+            </div>
+            <div class="filterSection">
+                <p><strong>Availability</strong></p>
+                <a href="{% url 'equipmentView' %}">All</a>
+                {% for itemstatus in itemstatus %}
+                    <a href="{% url 'equipmentView' %}?status={{ itemstatus.status }}">{{ itemstatus.status }}</a>
+                {% endfor %}
+            </div>
+            <div class="filterSection">
+                <p><strong>Search By Word</strong></p>
+                <form method="GET" action="{% url 'equipmentView' %}">
+                    <input type="text" name="q" class="searchInput" placeholder="Type and Press Enter">
+                </form>
+            </div>
+        </div>
+        <div class="scroll">
+            <table class="equipmentTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity Remaining</th>
+                        <th>Onsite</th>
+                        <th>Location</th>
+                        <th>Availability</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.onsite }}</td>
+                            <td>{{ item.location }}</td>
+                            <td>{{ item.status.status }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'book_item' item.id %}">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    {% if item.quantity is not None and item.quantity > 0 and item.status.status == 'Available' %}
+                                        <button type="submit">Book</button>
+                                    {% else %}
+                                        <button type="submit" disabled>Book</button> 
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

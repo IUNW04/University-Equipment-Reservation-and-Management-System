@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Management</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  .header {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .profile-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .logo {
+    width: 100px;
+    height: 100px;
+    background-color: grey;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    color: white;
+    margin-bottom: 10px;
+  }
+  .user-id {
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  .account-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .account-button:hover {
+    background-color: #0056b3;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 200px;
+    background-color: #333;
+    padding-top: 20px;
+    text-align: center;
+    z-index: 1;
+  }
+
+  .nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .nav ul li {
+    padding: 10px 0;
+  }
+
+  .nav ul li a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .nav ul li a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">Profile Management</div>
+<div class="profile-container">
+  <div class="logo">{{ initial }}</div>
+  <p class="user-id">{{ user.account_id }}</p>
+  <a href="{% url 'change_password' %}" class="account-button">Change Password</a>
+</div>
+
+<div class="nav">
+  <div class="sidebar-logo">
+    <span style="font-size: 24px; font-weight: bold; color: #ff6600;">W</span>
+    <span style="font-size: 24px; font-weight: bold; color: #ffffff;">M</span>
+    <span style="font-size: 24px; font-weight: bold; color: #007bff;">I</span>
+  </div>
+  <ul>
+    <li><a href="{% url 'equipmentView' %}">View Equip</a></li>
+    <li><a href="{% url 'bookings_view' %}">My Bookings</a></li>
+    <li><a href="{% url 'profile_management' %}">Profile</a></li> 
+    {% if is_staff %}
+    <li><a href="{% url 'booking_management' %}">Booking Management</a></li>
+    <li><a href="{% url 'equipmentManagement' %}">Equipment Management</a></li>
+    <li><a href="{% url 'user_management' %}">User Management</a></li>
+    <li><a href="{% url 'reports' %}">Generate Reports</a></li>
+    {% endif %}
+</ul>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+    <style>
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #333;
+            padding-top: 20px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .nav ul li {
+            padding: 5px 0;
+        }
+
+        .nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .pageContent {
+            margin-left: 200px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .centered {
+            text-align: center;
+        }
+
+        .centered ul {
+            display: inline-block;
+            text-align: left;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="sidebar-logo">
+            <span style="font-size: 24px; font-weight: bold; color: #ff6600;">W</span>
+            <span style="font-size: 24px; font-weight: bold; color: #ffffff;">M</span>
+            <span style="font-size: 24px; font-weight: bold; color: #007bff;">I</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'equipmentView' %}">View Equip</a></li>
+            <li><a href="{% url 'bookings_view' %}">My Bookings</a></li>
+            <li><a href="{% url 'profile_management' %}">Profile</a></li> 
+          
+            {% if is_staff %}
+            <li><a href="{% url 'booking_management' %}">Booking Management</a></li>
+            <li><a href="{% url 'equipmentManagement' %}">Equipment Management</a></li>
+            <li><a href="{% url 'user_management' %}">User Management</a></li>
+            <li><a href="{% url 'reports' %}">Generate Reports</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="pageContent">
+        <h1>Reports</h1>
+        <form method="get" action="{% url 'reports' %}">
+            <label for="item">Select an item:</label>
+            <select id="item" name="item">
+                {% for item in items %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Confirm/Change Item</button>
+        </form>
+
+        {% if item_id %}
+            <h2>Report for {{ item.name }}</h2>
+            <div class="centered">
+                <ul>
+                    <li><a href="{% url 'current_inventory_status' item_id %}">Current Inventory Status</a></li>
+                    <li><a href="{% url 'equipment_usage_history' item_id %}">Equipment Usage History</a></li>
+                    <li><a href="{% url 'warranty_report' item_id %}">Warranty Report</a></li>
+                    <li><a href="{% url 'overdue_equipment' item_id %}">Overdue Equipment</a></li>
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="centered">
+            <p><strong> Inventory:</strong></p>
+            <ul>
+                <p>Total Inventory Count: {{ totalInventory }}</p>
+                {% for type, count in typesInventory.items %}
+                    <li>{{ type }}: {{ count }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="text"], input[type="date"], input[type="time"] {
+            padding: 8px;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .go-back {
+    padding: 4px 10px; 
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block; 
+    margin: 20px auto;
+    text-decoration: none;
+    text-align: center;
+    width: 100px;
+}
+
+.go-back:hover {
+    background-color: #ddd;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Book Equipment</h1>
+
+    <div class="container">
+        <form method="POST" action="{% url 'book_item' item.id %}">
+            {% csrf_token %}
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" placeholder="MM/DD/YYYY">
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" placeholder="HH:MM">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" placeholder="MM/DD/YYYY">
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time" placeholder="HH:MM">
+
+            <button type="submit">Book</button>
+        </form>
+        <a href="#" class="go-back" onclick="history.go(-1); return false;">Go Back</a>
+    </div>
+</body>
+</html>

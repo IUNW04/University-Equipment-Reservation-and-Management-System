@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            position: relative;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #333;
+            padding-top: 20px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .nav ul li {
+            padding: 10px 0;
+        }
+
+        .nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .pageContent {
+            margin-left: 200px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .scroll {
+            overflow-x: auto;
+        }
+
+        .bookingTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .bookingTable th,
+        .bookingTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .bookingTable th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .bookingTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .buttonStyling {
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        .manageButton {
+            background-color: #007bff;
+        }
+
+        .deleteButton {
+            background-color: #ff0019;
+        }
+
+        .addUserButton {
+            background-color: #007bff;
+            padding: 12px 22px;
+            font-size: 15px;
+        }
+
+        .filterButtons {
+            margin-bottom: 20px;
+        }
+
+        .filterButtons a {
+            text-decoration: none;
+            color: rgb(110, 173, 241);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .filterButtons a:hover {
+            background-color: #ccc;
+            color: rgb(45, 0, 210);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="sidebar-logo">
+            <span style="font-size: 24px; font-weight: bold; color: #ff6600;">W</span>
+            <span style="font-size: 24px; font-weight: bold; color: #ffffff;">M</span>
+            <span style="font-size: 24px; font-weight: bold; color: #007bff;">I</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'equipmentView' %}">View Equip</a></li>
+            <li><a href="{% url 'bookings_view' %}">My Bookings</a></li>
+            <li><a href="{% url 'profile_management' %}">Profile</a></li> 
+          
+            {% if is_staff %}
+            <li><a href="{% url 'booking_management' %}">Booking Management</a></li>
+            <li><a href="{% url 'equipmentManagement' %}">Equipment Management</a></li>
+            <li><a href="{% url 'user_management' %}">User Management</a></li>
+            <li><a href="{% url 'reports' %}">Generate Reports</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="pageContent">
+        <h1>User Management</h1>
+
+        <div class="filterButtons">
+            <a href="{% url 'user_management' %}?filter=all">All</a>
+            <a href="{% url 'user_management' %}?filter=staff">Staff</a>
+            <a href="{% url 'user_management' %}?filter=nonStaff">Non-Staff</a>
+        </div>
+
+        <form method="get" action="{% url 'user_management' %}" style="margin-bottom: 20px;">
+            <input type="text" name="search" placeholder="Search by user name">
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="scroll">
+            <table class="bookingTable">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Is Staff</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.is_staff }}</td>
+                            <td>
+                                <a href="{% url 'update_user' user.id %}" class="buttonStyling manageButton">Manage</a>
+                                <a href="{% url 'delete_user' user.id %}" class="buttonStyling deleteButton">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <form method="post" action="{% url 'add_user' %}" style="position: absolute; top: 20px; right: 20px;">
+            {% csrf_token %}
+            <button type="submit" class="buttonStyling addUserButton">Add User</button>
+        </form>
+    </div>
+</body>
+</html>

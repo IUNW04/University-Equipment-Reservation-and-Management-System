@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Booking</title>
+    
+</head>
+<body>
+    <h1>Delete Booking</h1>
+    <p>Are you sure you want to delete the booking for {{ booking.user }}?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <form action="{% url 'deleteBooking' booking.id %}" method="POST" style="display: inline;">
+
+    </form>
+</body>
+</html>

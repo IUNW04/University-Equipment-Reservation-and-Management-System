@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Management</title>
+    <style>
+        
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .nav ul li {
+            margin-bottom: 10px;
+        }
+
+        .nav ul li a {
+           text-decoration: none;
+           color: #fff;
+           font-size: 16px;
+           text-align: center; 
+           display: block; 
+           padding: 5px 0; 
+}
+
+
+        .nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .pageContent {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #itemCount {
+            color: #b89c00;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filterSection {
+            flex: 0 0 30%;
+            text-align: center;
+        }
+
+        .filterSection a {
+            text-decoration: none;
+            color: #5aaeda;
+        }
+
+        .filterSection a:hover {
+            text-decoration: underline;
+        }
+
+        .searchInput {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        
+        .wmi-logo {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .wmi-logo span {
+            font-size: 24px;
+            font-weight: bold;
+            
+        }
+
+        .buttonStyling {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .buttonStyling:hover {
+            background-color: #0056b3;
+        }
+
+        .deleteButton {
+            text-decoration: none;
+            color: #fff;
+            background-color: #ff0019;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .deleteButton:hover {
+            background-color: #ff0000;
+        }
+
+     
+        .equipmentTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .equipmentTable th,
+        .equipmentTable td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .equipmentTable th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .equipmentTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .equipmentTable td:nth-child(2) {
+    max-width: 300px; 
+    word-wrap: break-word; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="wmi-logo">
+            <span style="font-size: 24px; font-weight: bold; color: #ff6600;">W</span>
+            <span style="font-size: 24px; font-weight: bold; color: #ffffff;">M</span>
+            <span style="font-size: 24px; font-weight: bold; color: #007bff;">I</span>
+        </div>
+        <ul>
+            <li><a href="{% url 'equipmentView' %}">View Equip</a></li>
+            <li><a href="{% url 'bookings_view' %}">My Bookings</a></li>
+            <li><a href="{% url 'profile_management' %}">Profile</a></li> 
+          
+            {% if is_staff %}
+            
+            <li><a href="{% url 'booking_management' %}">Booking Management</a></li>
+            <li><a href="{% url 'equipmentManagement' %}">Equipment Management</a></li>
+            <li><a href="{% url 'user_management' %}">User Management</a></li>
+            <li><a href="{% url 'reports' %}">Generate Reports</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="pageContent">
+        <h1>Equipment Management</h1>
+
+        <p id="itemCount">Current Inventory Selection: {{totalInventory}} items</p>
+        <a class="buttonStyling" href="{% url 'createItem' %}">Add Item</a>
+
+        <div class="filters">
+            <div class="filterSection">
+                <p><strong>Item Types</strong></p>
+                <a href="{% url 'equipmentManagement' %}">All</a>
+                {% for itemtype in itemtypes %}
+                    <a href="{% url 'equipmentManagement' %}?q={{ itemtype.type }}">{{ itemtype.type }}</a>
+                {% endfor %}
+            </div>
+            <div class="filterSection">
+                <p><strong>Availability</strong></p>
+                <a href="{% url 'equipmentManagement' %}">All</a>
+                {% for itemstatus in itemstatus %}
+                    <a href="{% url 'equipmentManagement' %}?q={{ itemstatus.status }}">{{ itemstatus.status }}</a>
+                {% endfor %}
+            </div>
+            <div class="filterSection">
+                <p><strong>Search By Word</strong></p>
+                <form method="GET" action="{% url 'equipmentManagement' %}">
+                    <input type="text" name="q" class="searchInput" placeholder="Type and Press Enter">
+                </form>
+            </div>
+        </div>
+        
+        <div class="scroll">
+            <table class="equipmentTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity Remaining</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in item %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.location }}</td>
+                            <td>
+                                <a class="buttonStyling" href="{% url 'updateItem' item.id %}">Manage</a>
+                                <a class="deleteButton" href="{% url 'deleteItem' item.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
